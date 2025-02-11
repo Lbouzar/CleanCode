@@ -17,6 +17,12 @@ import { Incident, IncidentSchema } from './schemas/incident.schema';
 import { Maintenance, MaintenanceSchema } from './schemas/maintenance.schema';
 import { Scooter, ScooterSchema } from './schemas/scooter.schema';
 
+// Importing all modules
+import { MaintenanceModule } from './modules/maintenance.module';
+import { ReservationModule } from './modules/reservation.module';
+import { ScooterModule } from './modules/scooter.module';
+import { StockModule } from './modules/stock.module';
+
 
 @Module({
   imports: [
@@ -44,6 +50,12 @@ import { Scooter, ScooterSchema } from './schemas/scooter.schema';
         synchronize: true,
       }),
     }),
+
+       // Feature Modules
+       StockModule,
+       ReservationModule,
+       ScooterModule,
+       MaintenanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
