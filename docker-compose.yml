@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: nest_app
+    restart: always
+    depends_on:
+      - mongodb
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL_MONGO=mongodb://mongodb:27017/mydatabase
+      - DATABASE_URL_POSTGRES=postgres://postgres:password@postgres:5432/mydatabase
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo_db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  mongo_data:
+  pg_data:
