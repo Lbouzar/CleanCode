@@ -30,6 +30,10 @@ export class StockService {
     return true;
   }
 
+  async deleteStock(id : number) {
+    return this.stockRepository.delete(id)
+  }
+
   async checkStockLow(partName: string): Promise<boolean> {
     return this.stockRepository.isStockLow(partName);
   }

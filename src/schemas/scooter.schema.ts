@@ -9,10 +9,12 @@ export class Scooter {
   model: string;
 
   @Prop({ required: true })
-  status: string; // Available, In Use, Under Maintenance
+  status: string;
 
   @Prop({ required: true })
   location: string;
+
+  //ajouter interval de maintenance
 
   @Prop({ type: Number, required: true })
   batteryLevel: number;
