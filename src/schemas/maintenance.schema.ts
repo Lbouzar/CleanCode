@@ -19,6 +19,9 @@ export class Maintenance {
 
   @Prop()
   cost: number;
+
+  @Prop({ default: false })
+  archived: boolean;
 }
 
 export const MaintenanceSchema = SchemaFactory.createForClass(Maintenance);

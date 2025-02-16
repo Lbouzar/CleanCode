@@ -18,7 +18,7 @@ export class MailerService {
 
   async sendMail(to: string, subject: string, text: string) {
     const mailOptions = {
-      from: this.configService.get<string>('NO_REPLY_ADDRESS'),
+      from: this.configService.get<string>('ADDRESS'),
       to,
       subject,
       text,
