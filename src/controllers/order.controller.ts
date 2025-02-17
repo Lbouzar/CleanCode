@@ -1,5 +1,7 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { Order, OrderStatus } from 'src/entities/order.entity';
+import { OrderItem } from 'src/entities/orderItem.entity';
+import { Stock } from 'src/entities/stock.entity';
 import { OrderService } from 'src/services/order.service';
 
 @Controller('orders')
@@ -23,12 +25,6 @@ export class OrderController {
             throw new BadRequestException("Invalid Order Status");
         return await this.orderService.getOrderByStatus(orderStatus);
     }
-
-    @Get('partname/:partName')
-    async getOrderByPartName(@Param('partName') partName: string){
-        return await this.orderService.getOrderByStockItem(partName)
-    }
-
     @Get('user/:userName')
     async getOrderByUserName(@Param('userName') userName: string){
         return await this.orderService.getOrderByUserName(userName);
@@ -36,10 +32,14 @@ export class OrderController {
 
     @Post()
     async createOrder(@Body() order : Order){
-        if(order.quantity <= 0) 
-            throw new BadRequestException('Invalid Order Quantity')
         return await this.orderService.createOrder(order)
     }
+
+    @Post('updateStock/')
+    async updateStock(@Query('orderStatus, stock, orderItem') orderStatus : string, stock: Stock, orderItem: OrderItem){
+        return await this.orderService.updateStock(orderStatus,stock,orderItem)
+    }
+
 
     @Delete(':id')
     async deleteOrder(@Param('id') id: number){

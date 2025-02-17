@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { Order, OrderStatus } from "src/entities/order.entity";
+import { OrderItem } from "src/entities/orderItem.entity";
+import { Stock } from "src/entities/stock.entity";
 import { OrderRepository } from "src/repositories/order.repository";
 
 @Injectable()
@@ -17,15 +19,11 @@ export class OrderService {
         
     }
 
-    async getOrderByStatus(orderStatus : OrderStatus) : Promise<Order[]>{
+    async getOrderByStatus(status : string) : Promise<Order[]>{
+        const orderStatus = status.toUpperCase() as OrderStatus;
         if(!Object.values(OrderStatus).includes(orderStatus))
             throw new BadRequestException("Invalid Order Status");
         return await this.orderRepository.findByOrderStatus(orderStatus);
-    }
-
-    async getOrderByStockItem(partName : string): Promise<Order[]>{
-        if(!partName) throw new BadRequestException("Invalid Stock item");
-        return await this.orderRepository.findByPartName(partName)
     }
 
     async getOrderByUserName(userName : string) : Promise<Order[]>{
@@ -33,8 +31,17 @@ export class OrderService {
         return await this.orderRepository.findByUserName(userName)
     }
     async createOrder(order : Order) : Promise<Order>{
-        if(!order) throw new BadRequestException("Invalid Order");
+        //A arranger.
+        if(!order || order.user.role !== "Admin") throw new BadRequestException("Invalid Order");
         return await this.orderRepository.save(order)
+    }
+
+    async updateStock(status: string, stock : Stock, orderItem: OrderItem){
+        const orderStatus = status.toUpperCase() as OrderStatus;
+        if(!Object.values(OrderStatus).includes(orderStatus))
+            throw new BadRequestException("Invalid Order Status");
+        return await this.orderRepository.updateStock(orderStatus,stock,orderItem)
+        
     }
 
     async deleteOrder(id : number){

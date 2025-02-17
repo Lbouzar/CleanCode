@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Order, OrderStatus } from "src/entities/order.entity";
+import { OrderItem } from "src/entities/orderItem.entity";
+import { Stock } from "src/entities/stock.entity";
 import { Repository } from "typeorm";
-
 @Injectable()
 export class OrderRepository {
     constructor(
@@ -28,15 +29,16 @@ export class OrderRepository {
         .where('user.name = :userName', {userName})
         .getMany()
     }
+    
+    async updateStock(orderStatus: OrderStatus, stock: Stock, orderItem: OrderItem){
+        if(orderStatus !== OrderStatus.SHIPPED) return 
+        return await this.orderRepo.createQueryBuilder()
+        .update(Stock)
+        .set({quantity :() =>  `stock.quantity - ${orderItem.quantity}`})
+        .where('id = :stockId', {stockId: stock.id})
+        .execute();
 
-    async findByPartName(partName : string){
-        return await this.orderRepo.createQueryBuilder('order')
-        .leftJoinAndSelect('order.stock','stock')
-        .where('stock.partName = :partName', { partName})
-        .getMany();
     }
-
-
 
     async save(order: Order){
         return await this.orderRepo.save(order);
