@@ -34,7 +34,7 @@ export class OrderRepository {
         if(orderStatus !== OrderStatus.SHIPPED) return 
         return await this.orderRepo.createQueryBuilder()
         .update(Stock)
-        .set({quantity :() =>  `stock.quantity - ${orderItem.quantity}`})
+        .set({quantity :() =>  `stock.quantity + ${orderItem.quantity}`})
         .where('id = :stockId', {stockId: stock.id})
         .execute();
 
