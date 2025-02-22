@@ -9,13 +9,13 @@ export class MaintenanceRepository {
     @InjectModel(Maintenance.name) private readonly maintenanceModel: Model<MaintenanceDocument>,
   ) {}
 
-  async findAll(): Promise<Maintenance[]> {
-    return this.maintenanceModel.find().exec();
+  async findOne(id: string) {
+    return await this.maintenanceModel.findById(id).populate('usedStockItems').exec();
   }
 
-  async findOne(id: string): Promise<Maintenance | null> {
-    return this.maintenanceModel.findById(id).exec();
-  }
+  async findAll() {
+    return await this.maintenanceModel.find().populate('usedStockItems').exec();
+  } 
 
   async save(maintenance: Maintenance): Promise<Maintenance> {
     return new this.maintenanceModel(maintenance).save();
@@ -23,6 +23,10 @@ export class MaintenanceRepository {
 
   async delete(id: string): Promise<void> {
     await this.maintenanceModel.findByIdAndDelete(id).exec();
+  }
+
+  async findMaintenanceByScooter(scooterId: string) {
+    return await this.maintenanceModel.find({ scooterId }).populate('usedStockItems').exec();
   }
 
   async closeOldMaintenanceLogs() {

@@ -11,6 +11,11 @@ export class Stock {
   @Column()
   quantity: number;
 
+
+  //minimum quantity before sending low quantity alert.
+  @Column({ default: 5})
+  minQuantity: number;
+
   @Column()
   supplier: string;
 

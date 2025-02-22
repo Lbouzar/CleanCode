@@ -1,8 +1,13 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
-import { Order, OrderStatus } from 'src/entities/order.entity';
-import { OrderItem } from 'src/entities/orderItem.entity';
-import { Stock } from 'src/entities/stock.entity';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { UpdateStockDto } from 'src/dtos/update-stock.dto';
+import { OrderStatus } from 'src/entities/order.entity';
 import { OrderService } from 'src/services/order.service';
+
+interface CreateOrderRequest {
+    userId: number;
+    items: { stockId: number; quantity: number }[];
+    status: string;
+}
 
 @Controller('orders')
 export class OrderController {
@@ -31,15 +36,21 @@ export class OrderController {
     }
 
     @Post()
-    async createOrder(@Body() order : Order){
-        return await this.orderService.createOrder(order)
+    async createOrder(
+        @Body() { items }: { items: { stockId: number, quantity: number }[] }
+    ) {
+        return await this.orderService.createOrder(items);
     }
 
-    @Post('updateStock/')
-    async updateStock(@Query('orderStatus, stock, orderItem') orderStatus : string, stock: Stock, orderItem: OrderItem){
-        return await this.orderService.updateStock(orderStatus,stock,orderItem)
-    }
 
+    @Post('updateStock')
+    async updateStock(@Body() updateStockDto: UpdateStockDto) {
+        return await this.orderService.updateStock(
+            updateStockDto.orderStatus, 
+            updateStockDto.stockId, 
+            updateStockDto.orderItemId
+        );
+    }
 
     @Delete(':id')
     async deleteOrder(@Param('id') id: number){

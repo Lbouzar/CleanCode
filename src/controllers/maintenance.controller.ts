@@ -37,5 +37,21 @@ export class MaintenanceController {
     }
 
 
+    @Post('perform')
+    async performMaintenance(
+        @Body() { scooterId, type, usedStock, details, cost }: 
+        { scooterId: string, type: string, usedStock: { stockId: number, quantity: number }[], details?: string, cost?: number }
+    ) {
+        return await this.maintenanceService.performMaintenance(scooterId, type, usedStock, details, cost);
+    }
+
+    @Get('history')
+    async getMaintenanceHistory() {
+        return await this.maintenanceService.getMaintenanceHistory();
+    }
 }
+
+
+
+
 
