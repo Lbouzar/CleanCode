@@ -30,4 +30,13 @@ export class UserProfileService {
     async getUserProfiles(): Promise<UserProfile[]> {
         return this.userProfileRepository.find();
     }
+
+    /**
+     * Retrieves a user profile by username.
+     * @param username - The username of the user profile to retrieve.
+     * @returns The user profile if found, otherwise null.
+     */
+    async findOne(username: string): Promise<UserProfile | null> {
+        return this.userProfileRepository.findOne({ where: { name: username } });
+    }
 }

@@ -9,6 +9,9 @@ export class UserProfile {
     name: string;
 
     @Column()
+    password: string;
+
+    @Column()
     license: string;
 
     @Column()
