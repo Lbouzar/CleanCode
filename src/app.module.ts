@@ -9,6 +9,8 @@ import { AppService } from './app.service';
 import { Reservation } from './entities/reservation.entity';
 import { Stock } from './entities/stock.entity';
 import { User } from './entities/user.entity';
+import { UserProfile } from './entities/user-profile.entity';
+import { Scooter as ScooterEntity } from './entities/scooter.entity';
 
 // MongoDB Schemas
 import { Incident, IncidentSchema } from './schemas/incident.schema';
@@ -20,7 +22,10 @@ import { MaintenanceModule } from './modules/maintenance.module';
 import { ReservationModule } from './modules/reservation.module';
 import { ScooterModule } from './modules/scooter.module';
 import { StockModule } from './modules/stock.module';
-import { MailerModule } from './modules/mailer.module';
+
+// Importing services
+import { UserProfileService } from './services/user-profile.service';
+import { ScooterReservationService } from './services/scooter-reservation.service';
 
 @Module({
   imports: [
@@ -49,20 +54,20 @@ import { MailerModule } from './modules/mailer.module';
           'DATABASE_URL_POSTGRES',
           'postgres://postgres:password@localhost:5432/mydatabase',
         ),
-        entities: [User, Stock, Reservation],
+        entities: [User, Stock, Reservation, UserProfile, ScooterEntity],
         autoLoadEntities: true,
         synchronize: true,
       }),
     }),
+    TypeOrmModule.forFeature([UserProfile, ScooterEntity]),
 
     // Feature Modules
     StockModule,
     ReservationModule,
     ScooterModule,
     MaintenanceModule,
-    MailerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UserProfileService, ScooterReservationService],
 })
 export class AppModule {}
