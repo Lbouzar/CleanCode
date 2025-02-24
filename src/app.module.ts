@@ -22,6 +22,7 @@ import { MaintenanceModule } from './modules/maintenance.module';
 import { ReservationModule } from './modules/reservation.module';
 import { ScooterModule } from './modules/scooter.module';
 import { StockModule } from './modules/stock.module';
+import { AuthModule } from './modules/auth.module';
 
 // Importing services
 import { UserProfileService } from './services/user-profile.service';
@@ -41,7 +42,7 @@ import { ScooterController } from './controllers/scooter.controller';
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>(
           'DATABASE_URL_MONGO',
-          'mongodb://localhost:27017/mydatabase',
+          'mongodb://127.0.0.1:27017/mydatabase',
         ),
       }),
     }),
@@ -57,7 +58,7 @@ import { ScooterController } from './controllers/scooter.controller';
         type: 'postgres',
         url: configService.get<string>(
           'DATABASE_URL_POSTGRES',
-          'postgres://postgres:password@localhost:5432/mydatabase',
+          'postgres://postgres:password@localhost:5433/mydatabase',
         ),
         entities: [User, Stock, Reservation, UserProfile, ScooterEntity],
         autoLoadEntities: true,
@@ -65,7 +66,7 @@ import { ScooterController } from './controllers/scooter.controller';
       }),
     }),
     TypeOrmModule.forFeature([UserProfile, ScooterEntity]),
-
+    AuthModule,
     // Feature Modules
     StockModule,
     ReservationModule,
