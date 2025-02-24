@@ -46,6 +46,7 @@ export class AuthService {
       name: createUserDto.username, // Assign a name
       license: '', // Assign a license
       preferredModel: '', // Assign a preferred model
+      roles: [], // Assign roles
       ...createUserDto,
       password: hashedPassword,
     };

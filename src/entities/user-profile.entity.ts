@@ -16,4 +16,7 @@ export class UserProfile {
 
   @Column()
   preferredModel: string;
+
+  @Column('simple-array')
+  roles: string[];
 }
