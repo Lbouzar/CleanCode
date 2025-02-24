@@ -27,6 +27,11 @@ import { StockModule } from './modules/stock.module';
 import { UserProfileService } from './services/user-profile.service';
 import { ScooterReservationService } from './services/scooter-reservation.service';
 
+// Importing controllers
+import { AuthController } from './controllers/auth.controller';
+import { UserProfileController } from './controllers/user-profile.controller';
+import { ScooterController } from './controllers/scooter.controller';
+
 @Module({
   imports: [
     ConfigModule.forRoot(), // Load .env file
@@ -67,7 +72,12 @@ import { ScooterReservationService } from './services/scooter-reservation.servic
     ScooterModule,
     MaintenanceModule,
   ],
-  controllers: [AppController],
+  controllers: [
+    AppController,
+    AuthController,
+    UserProfileController,
+    ScooterController,
+  ],
   providers: [AppService, UserProfileService, ScooterReservationService],
 })
 export class AppModule {}
