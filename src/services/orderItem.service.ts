@@ -26,6 +26,7 @@ export class OrderItemService {
     async deleterOrderItem(id: number){
         return await this.orderItemRepository.delete(id);
     }
+    
 
 
 }

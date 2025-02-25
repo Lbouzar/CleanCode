@@ -13,11 +13,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Incident } from 'src/schemas/incident.schema';
+import { MailerService } from 'src/services/mailer.service';
+import { NotifyManagerDto } from '../dto/notify-manager.dto';
 import { Maintenance } from '../schemas/maintenance.schema';
 import { MaintenanceService } from '../services/maintenance.service';
-import { MailerService } from 'src/services/mailer.service';
-import { Incident } from 'src/schemas/incident.schema';
-import { NotifyManagerDto } from '../dto/notify-manager.dto';
 
 @ApiBearerAuth()
 @ApiTags('maintenance')
@@ -151,7 +151,7 @@ export class MaintenanceController {
   async getArchivedMaintenanceLogs() {
     return await this.maintenanceService.getArchivedMaintenanceLogs();
   }
-}
+
  
     @Post('perform')
     async performMaintenance(
