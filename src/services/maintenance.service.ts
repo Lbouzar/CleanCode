@@ -1,18 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { StockRepository } from 'src/repositories/stock.repository';
+import { MaintenanceRepository } from 'src/repositories/maintenance.repository';
 import { Incident } from 'src/schemas/incident.schema';
 import { MaintenanceInterval } from 'src/schemas/maintenance-interval.schema';
-import { MaintenanceRepository } from '../repositories/maintenance.repository';
-import { Maintenance } from '../schemas/maintenance.schema';
+import { Maintenance, MaintenanceDocument } from '../schemas/maintenance.schema';
+import { StockService } from './stock.service';
 
 @Injectable()
 export class MaintenanceService {
-  constructor(private readonly maintenanceRepository: MaintenanceRepository,
-              private readonly stockRepository : StockRepository,
-               private readonly stockService: StockService,
-              
+  stockService: StockService;
+  constructor(
+               private readonly maintenanceRepository: MaintenanceRepository,
               @InjectModel(Maintenance.name) private maintenanceModel: Model<MaintenanceDocument>,
   ) {}
 
@@ -46,12 +45,11 @@ export class MaintenanceService {
     const stockUpdates: number[] = [];
 
     for (const item of usedStock) {
-        // ✅ Use StockService to decrease stock instead of manually handling it
         await this.stockService.decreaseStock(item.stockId, item.quantity);
         stockUpdates.push(item.stockId); // Store updated stock IDs
     }
 
-    // Save Maintenance record with used stock references
+   // Save Maintenance record with used stock references
     const newMaintenance = new this.maintenanceModel({
         scooterId,
         type,

@@ -1,15 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { MaintenanceController } from 'src/controllers/maintenance.controller';
+import { Incident, IncidentSchema } from 'src/schemas/incident.schema';
+import { MaintenanceInterval, MaintenanceIntervalSchema } from 'src/schemas/maintenance-interval.schema';
+import { MailerService } from 'src/services/mailer.service';
 import { MaintenanceRepository } from '../repositories/maintenance.repository';
 import { Maintenance, MaintenanceSchema } from '../schemas/maintenance.schema';
 import { MaintenanceService } from '../services/maintenance.service';
-import { MailerService } from 'src/services/mailer.service';
-import { MaintenanceIntervalSchema } from 'src/schemas/maintenance-interval.schema';
-import { IncidentSchema } from 'src/schemas/incident.schema';
-import { MaintenanceInterval } from 'src/schemas/maintenance-interval.schema';
-import { Incident } from 'src/schemas/incident.schema';
 
 @Module({
   imports: [

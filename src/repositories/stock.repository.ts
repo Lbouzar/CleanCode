@@ -5,9 +5,8 @@ import { Stock } from '../entities/stock.entity';
 
 @Injectable()
 export class StockRepository {
-  constructor(
-    @InjectRepository(Stock)
-    private readonly stockRepo: Repository<Stock>,
+  constructor( 
+    @InjectRepository(Stock) private readonly stockRepo: Repository<Stock>,
   ) {}
 
   async findAll() {
