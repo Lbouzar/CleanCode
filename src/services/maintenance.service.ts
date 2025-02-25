@@ -5,14 +5,14 @@ import { MaintenanceRepository } from 'src/repositories/maintenance.repository';
 import { Incident } from 'src/schemas/incident.schema';
 import { MaintenanceInterval } from 'src/schemas/maintenance-interval.schema';
 import { Maintenance, MaintenanceDocument } from '../schemas/maintenance.schema';
+import { StockService } from './stock.service';
 
 @Injectable()
 export class MaintenanceService {
+  stockService: StockService;
   constructor(
                private readonly maintenanceRepository: MaintenanceRepository,
-            //   private readonly stockService: StockService,
-              
-             @InjectModel(Maintenance.name) private maintenanceModel: Model<MaintenanceDocument>,
+              @InjectModel(Maintenance.name) private maintenanceModel: Model<MaintenanceDocument>,
   ) {}
 
   async getAllMaintenanceLogs(): Promise<Maintenance[]> {
@@ -44,12 +44,12 @@ export class MaintenanceService {
 ) {
     const stockUpdates: number[] = [];
 
-    // for (const item of usedStock) {
-    //     await this.stockService.decreaseStock(item.stockId, item.quantity);
-    //     stockUpdates.push(item.stockId); // Store updated stock IDs
-    // }
+    for (const item of usedStock) {
+        await this.stockService.decreaseStock(item.stockId, item.quantity);
+        stockUpdates.push(item.stockId); // Store updated stock IDs
+    }
 
-    // Save Maintenance record with used stock references
+   // Save Maintenance record with used stock references
     const newMaintenance = new this.maintenanceModel({
         scooterId,
         type,
