@@ -11,12 +11,17 @@ export class OrderItemRepository {
         private readonly orderItemRepo : Repository<OrderItem>
     ){}
 
-    async findAll() {
-        return await this.orderItemRepo.find()
+    async findOne(id: number) {
+        return await this.orderItemRepo.findOne({
+            where: { id },
+            relations: ['stock'], 
+        });
     }
-
-    async findOne(id : number){
-        return await this.orderItemRepo.findOne({where : {id}})
+    
+    async findAll() {
+        return await this.orderItemRepo.find({
+            relations: ['order', 'stock'], 
+        });
     }
 
     async findByPartName(partName : string){
@@ -31,6 +36,19 @@ export class OrderItemRepository {
         .leftJoinAndSelect('orderItem.stock','stock')
         .where('stock.supplier = :supplier',{supplier})
         .getMany()
+    }
+
+
+    async addOrderItem(orderId: number, stockId: number, quantity: number) {
+        return await this.orderItemRepo.save({
+            order: { id: orderId },
+            stock: { id: stockId },
+            quantity: quantity,
+        });
+    }
+
+    async getOrderItemsByOrder(orderId: number) {
+        return await this.orderItemRepo.find({ where: { order: { id: orderId } }, relations: ['stock'] });
     }
 
     async save(orderItem : OrderItem){

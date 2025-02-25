@@ -16,11 +16,11 @@ import { Maintenance, MaintenanceSchema } from './schemas/maintenance.schema';
 import { Scooter, ScooterSchema } from './schemas/scooter.schema';
 
 // Importing all modules
+import { MailerModule } from '@nestjs-modules/mailer';
 import { MaintenanceModule } from './modules/maintenance.module';
 import { ReservationModule } from './modules/reservation.module';
 import { ScooterModule } from './modules/scooter.module';
 import { StockModule } from './modules/stock.module';
-import { MailerModule } from './modules/mailer.module';
 
 @Module({
   imports: [
@@ -52,6 +52,24 @@ import { MailerModule } from './modules/mailer.module';
         entities: [User, Stock, Reservation],
         autoLoadEntities: true,
         synchronize: true,
+      }),
+    }),
+
+    
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          service: 'Gmail', 
+          auth: {
+            user: configService.get<string>('EMAIL_USER'),
+            pass: configService.get<string>('EMAIL_PASS'),
+          },
+        },
+        defaults: {
+          from: `"Support Team" <${configService.get<string>('EMAIL_USER')}>`,
+        },
       }),
     }),
 

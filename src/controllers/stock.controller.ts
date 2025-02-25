@@ -7,11 +7,6 @@ export class StockController {
 
     constructor(private readonly stockService : StockService) {}
 
-    @Get()
-    async getAllStock (){
-        return await this.stockService.getAllStock();
-    }
-
     @Get(':id')
     async getStockById(@Param('id') id: number) {
         return await this.stockService.getStockById(id);
@@ -26,15 +21,20 @@ export class StockController {
     }
 
     @Post('remove')
-    async remove(@Body() body: {partName: string; quantity : number}) {
-           const {partName , quantity} = body; 
-           return await this.stockService.removeStock(partName, quantity)
+    async remove(@Body() body: {stockId: number; quantity : number}) {
+           const {stockId , quantity} = body; 
+           return await this.stockService.decreaseStock(stockId, quantity)
     }
 
     @Get('check/low')
     async checkStockLow(@Query('partName') partName : string){
         return await this.stockService.checkStockLow(partName);
     }
+
+    @Get('real-time')
+    async getStockLevels() {
+    return await this.stockService.getAllStock();
+}
 
     @Delete(':id')
     async deleteStock(@Param('id') id: number){

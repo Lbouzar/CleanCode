@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export type MaintenanceDocument = Maintenance & Document;
 
@@ -8,6 +8,7 @@ export class Maintenance {
   @Prop({ required: true })
   scooterId: string;
 
+  //Todo: enum? 
   @Prop({ required: true })
   type: string; // Preventive, Corrective
 
@@ -15,10 +16,13 @@ export class Maintenance {
   date: Date;
 
   @Prop()
-  details: string; // Notes about the maintenance
+  details: string; 
 
   @Prop()
   cost: number;
+
+  @Prop([{ type: Types.ObjectId, ref: 'Stock' }]) 
+  usedStockItems: Types.ObjectId[];
 
   @Prop({ default: false })
   archived: boolean;

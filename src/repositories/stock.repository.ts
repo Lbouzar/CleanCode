@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import { Stock } from '../entities/stock.entity';
 
 @Injectable()
@@ -38,8 +38,17 @@ export class StockRepository {
     return await this.stockRepo.delete(id);
   }
 
+ 
+
+  async findLowStockItems(threshhold: number) {
+      return await this.stockRepo.find({
+          where: { quantity: LessThanOrEqual(threshhold) },
+      });
+  }
+  
+
   async isStockLow(partName: string): Promise<boolean> {
     const part = await this.stockRepo.findOne({ where: { partName } });
-    return part! && part!.quantity < 5; 
+    return part! && part!.quantity < 5;
   }
 }

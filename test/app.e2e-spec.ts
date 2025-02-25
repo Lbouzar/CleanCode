@@ -1,22 +1,44 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { DataSource } from 'typeorm';
+import { AppModule } from '../src/app.module';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+describe('AppController (E2E)', () => {
+  let app: INestApplication;
+  let dataSource: DataSource;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        AppModule,
+        TypeOrmModule.forRootAsync({
+          imports: [ConfigModule],
+          inject: [ConfigService],
+          useFactory: (configService: ConfigService) => ({
+            type: 'postgres',
+            url: configService.get<string>('DATABASE_URL_POSTGRES'),
+            autoLoadEntities: true,
+            synchronize: true, // Resets the schema before each test
+          }),
+        }),
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    dataSource = moduleFixture.get<DataSource>(DataSource);
+    await dataSource.synchronize(true); // Reset DB schema before tests
   });
 
-  it('/ (GET)', () => {
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('should return Hello World! on GET /', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
