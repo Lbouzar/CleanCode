@@ -4,9 +4,10 @@ import { StockController } from 'src/controllers/stock.controller';
 import { Stock } from '../entities/stock.entity';
 import { StockRepository } from '../repositories/stock.repository';
 import { StockService } from '../services/stock.service';
+import { NotificationModule } from './notification.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Stock])],
+  imports: [TypeOrmModule.forFeature([Stock]), NotificationModule],
   providers: [StockRepository, StockService],
   controllers: [StockController],
   exports: [StockService],
