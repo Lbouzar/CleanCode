@@ -1,5 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { UpdateStockDto } from 'src/dtos/update-stock.dto';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { OrderStatus } from 'src/entities/order.entity';
 import { OrderService } from 'src/services/order.service';
 
@@ -43,13 +42,14 @@ export class OrderController {
     }
 
 
-    @Post('updateStock')
-    async updateStock(@Body() updateStockDto: UpdateStockDto) {
-        return await this.orderService.updateStock(
-            updateStockDto.orderStatus, 
-            updateStockDto.stockId, 
-            updateStockDto.orderItemId
-        );
+    @Post('updateStock/:orderId')
+    async updateStock(@Param('orderId', ParseIntPipe) orderId: number) {
+        return await this.orderService.updateStock(orderId);
+    }
+
+    @Get('history')
+    async getOrderHistory() {
+        return await this.orderService.getOrderHistory();
     }
 
     @Delete(':id')

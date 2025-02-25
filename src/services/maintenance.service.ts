@@ -1,14 +1,17 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { StockRepository } from 'src/repositories/stock.repository';
 import { MaintenanceRepository } from '../repositories/maintenance.repository';
 import { Maintenance, MaintenanceDocument } from '../schemas/maintenance.schema';
+import { StockService } from './stock.service';
 
 @Injectable()
 export class MaintenanceService {
   constructor(private readonly maintenanceRepository: MaintenanceRepository,
               private readonly stockRepository : StockRepository,
+               private readonly stockService: StockService,
+              
               @InjectModel(Maintenance.name) private maintenanceModel: Model<MaintenanceDocument>,
   ) {}
 
@@ -32,24 +35,19 @@ export class MaintenanceService {
     return this.maintenanceRepository.closeOldMaintenanceLogs();
   }
 
-  async performMaintenance(scooterId: string, type: string, usedStock: { stockId: number; quantity: number }[], details?: string, cost?: number) {
+  async performMaintenance(
+    scooterId: string,
+    type: string,
+    usedStock: { stockId: number; quantity: number }[],
+    details?: string,
+    cost?: number
+) {
     const stockUpdates: number[] = [];
 
     for (const item of usedStock) {
-        const stock = await this.stockRepository.findOne(item.stockId);
-
-        if (!stock) {
-            throw new NotFoundException(`Stock item with ID ${item.stockId} not found`);
-        }
-
-        if (stock.quantity < item.quantity) {
-            throw new BadRequestException(`Not enough stock available for ${stock.partName}. Only ${stock.quantity} left.`);
-        }
-
-        // Reduce stock quantity
-        stock.quantity -= item.quantity;
-        await this.stockRepository.save(stock);
-        stockUpdates.push(stock.id); // Store updated stock IDs
+        // ✅ Use StockService to decrease stock instead of manually handling it
+        await this.stockService.decreaseStock(item.stockId, item.quantity);
+        stockUpdates.push(item.stockId); // Store updated stock IDs
     }
 
     // Save Maintenance record with used stock references
@@ -59,11 +57,12 @@ export class MaintenanceService {
         date: new Date(),
         details,
         cost,
-        usedStockItems: stockUpdates, // Save the used stock IDs
+        usedStockItems: stockUpdates,
     });
 
     return await newMaintenance.save();
 }
+
 
 async getMaintenanceHistory() {
   return await this.maintenanceModel.find().populate('usedStockItems').exec();
